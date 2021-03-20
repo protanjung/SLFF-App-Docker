@@ -1,0 +1,10 @@
+<launch>
+    <rosparam file="$(env HOME)/slff-data/slff.yaml" />
+
+    <node name="expansion" type="expansion" pkg="slff" output="screen" respawn="true" />
+    <node name="log" type="log" pkg="slff" output="screen" respawn="true" />
+    <node name="rss" type="rss" pkg="slff" output="screen" respawn="true" />
+    <node name="gto" type="gto" pkg="slff" output="screen" respawn="true" />
+    <node name="routine" type="routine" pkg="slff" output="screen" respawn="true" />
+    <node name="rfid" type="rfid" pkg="slff" output="screen" respawn="true" />
+</launch>

@@ -1,0 +1,40 @@
+name-template: 'FLO v$RESOLVED_VERSION'
+tag-template: 'v$RESOLVED_VERSION'
+
+template: |
+  ## What’s Changed
+
+  $CHANGES
+
+categories:
+  - title: '🔧 Enhancement'
+    label: 'enhancement'
+  - title: '🚀 Feature'
+    label: 'feature'
+  - title: '🐛 BugFix'
+    label: 'bugfix'
+  - title: '🧰 Maintenance'
+    label: 'maintenance'
+
+autolabeler:
+  - label: 'enhancement'
+    branch: '/enhancement/'
+  - label: 'feature'
+    branch: '/feature/'
+  - label: 'bugfix'
+    branch: '/bugfix/'
+  - label: 'maintenance'
+    branch: '/maintenance/'
+    
+version-resolver:
+  major:
+    labels:
+      - 'major'
+  minor:
+    labels:
+      - 'minor'
+  patch:
+    labels:
+      - 'patch'
+  default: patch
+

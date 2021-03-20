@@ -1,0 +1,6 @@
+string rfid_tid
+
+---
+
+bool success
+string response

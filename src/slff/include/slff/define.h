@@ -1,0 +1,18 @@
+#ifndef DEFINE_H_
+#define DEFINE_H_
+
+#define TIPE_OPEN 1
+#define TIPE_ENTRANCE 2
+#define TIPE_EXIT 3
+
+#define STATE_IDDLE 0
+#define STATE_RSS_CHECK 1
+#define STATE_RSS_CHECK_DONE 2
+#define STATE_GTO_PRESENT 3
+#define STATE_GTO_PRESENT_DONE 4
+#define STATE_GTO_STORE 5
+#define STATE_GTO_STORE_DONE 6
+#define STATE_RSS_STORE 7
+#define STATE_RSS_STORE_DONE 8
+
+#endif
