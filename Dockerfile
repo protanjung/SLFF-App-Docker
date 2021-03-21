@@ -11,9 +11,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
 # Install other dependencies
 RUN apt-get update && apt-get install --no-install-recommends -y \
     libserialport-dev \
-    libmodbus-dev \
     libcurl4-openssl-dev \
-    libsqlite3-dev \
     && rm -rf /var/lib/apt/lists/*
 
 # Make directory for application and application data
