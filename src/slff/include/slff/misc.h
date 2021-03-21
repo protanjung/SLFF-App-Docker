@@ -126,7 +126,7 @@ void misc::log_help(const char *header, const char *format, va_list args)
     std::string time_string = boost::posix_time::to_simple_string(time_ptime);
 
     slff::log msg_log;
-    msg_log.datetime = time_string;
+    msg_log.datetime = time_string.substr(12, 12);
     msg_log.header = std::string(header);
     msg_log.message = std::string(message);
     pub_log.publish(msg_log);
