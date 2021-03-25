@@ -1184,9 +1184,9 @@ void report_time(uint8_t n)
 {
     help.log_warn("====> Rangkuman waktu transaksi");
     help.log_info("Detect -> RSS Check   = %03.0lfms                ", (kr[n].time_rss_check - kr[n].time_detect) * 1000);
-    help.log_info("Detect -> GTO Present = %03.0lfms, dT = %03.0lfms", (kr[n].time_gto_present - kr[n].time_detect) * 1000, (kr[n].time_gto_present - kr[n].time_rss_check) * 1000);
-    help.log_info("Detect -> GTO Store   = %03.0lfms, dT = %03.0lfms", (kr[n].time_gto_store - kr[n].time_detect) * 1000, (kr[n].time_gto_store - kr[n].time_gto_present) * 1000);
-    help.log_info("Detect -> RSS Store   = %03.0lfms, dT = %03.0lfms", (kr[n].time_rss_store - kr[n].time_detect) * 1000, (kr[n].time_rss_store - kr[n].time_gto_store) * 1000);
+    help.log_info("Detect -> GTO Present = %03.0lfms, dt = %03.0lfms", (kr[n].time_gto_present - kr[n].time_detect) * 1000, (kr[n].time_gto_present - kr[n].time_rss_check) * 1000);
+    help.log_info("Detect -> GTO Store   = %03.0lfms, dt = %03.0lfms", (kr[n].time_gto_store - kr[n].time_detect) * 1000, (kr[n].time_gto_store - kr[n].time_gto_present) * 1000);
+    help.log_info("Detect -> RSS Store   = %03.0lfms, dt = %03.0lfms", (kr[n].time_rss_store - kr[n].time_detect) * 1000, (kr[n].time_rss_store - kr[n].time_gto_store) * 1000);
 }
 
 //=============================================================================
