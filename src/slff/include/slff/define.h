@@ -5,6 +5,9 @@
 #define TIPE_ENTRANCE 2
 #define TIPE_EXIT 3
 
+#define RFID_INVENGO 0
+#define RFID_CU1 1
+
 #define STATE_IDDLE 0
 #define STATE_RSS_CHECK 1
 #define STATE_RSS_CHECK_DONE 2
