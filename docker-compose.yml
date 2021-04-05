@@ -9,9 +9,9 @@ services:
     volumes:
       - ~/slff-data:/root/slff-data
     devices: 
-      - /dev/ttyS*:/dev/ttyS*
-      - /dev/ttyACM*:/dev/ttyACM*
-      - /dev/ttyUSB*:/dev/ttyUSB*
+      - /dev/ttyS*
+      - /dev/ttyACM*
+      - /dev/ttyUSB*
 
   mysql:
     container_name: mysql
