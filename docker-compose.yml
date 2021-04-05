@@ -1,0 +1,65 @@
+version: "3.8"
+
+services:
+  slff-app-docker:
+    container_name: slff
+    build: .
+    restart: always
+    privileged: false
+    volumes:
+      - ~/slff-data:/root/slff-data
+    devices: 
+      - /dev/ttyS*:/dev/ttyS*
+      - /dev/ttyACM*:/dev/ttyACM*
+      - /dev/ttyUSB*:/dev/ttyUSB*
+
+  mysql:
+    container_name: mysql
+    image: mysql
+    restart: always
+    privileged: false
+    ports:
+      - 3306:3306
+    volumes:
+      - ~/slff-data/mysql:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=slff
+      - MYSQL_USER=slff
+      - MYSQL_PASSWORD=slff
+
+  node_exporter:
+    container_name: node_exporter
+    image: quay.io/prometheus/node-exporter
+    restart: always
+    privileged: false
+    network_mode: host
+    pid: host
+    volumes:
+      - /:/rootfs:ro,rslave
+    command:
+      - --path.rootfs=/rootfs
+
+  cadvisor:
+    container_name: cadvisor
+    image: gcr.io/cadvisor/cadvisor
+    restart: always
+    privileged: true
+    ports:
+      - 8080:8080
+    volumes:
+      - /:/rootfs:ro
+      - /sys:/sys:ro
+      - /var/run:/var/run:ro
+      - /dev/disk/:/dev/disk:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+    devices:
+      - /dev/kmsg
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana
+    restart: always
+    privileged: false
+    ports:
+      - 3000:3000
