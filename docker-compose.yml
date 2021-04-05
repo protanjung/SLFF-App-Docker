@@ -5,13 +5,10 @@ services:
     container_name: slff
     build: .
     restart: always
-    privileged: false
+    privileged: true
     volumes:
       - ~/slff-data:/root/slff-data
-    devices: 
-      - /dev/ttyS*:/dev/ttyS*
-      - /dev/ttyACM*:/dev/ttyACM*
-      - /dev/ttyUSB*:/dev/ttyUSB*
+      - /dev:/dev
 
   mysql:
     container_name: mysql
