@@ -52,11 +52,3 @@ services:
       - /var/lib/docker/:/var/lib/docker:ro
     devices:
       - /dev/kmsg
-
-  grafana:
-    container_name: grafana
-    image: grafana/grafana
-    restart: always
-    privileged: false
-    ports:
-      - 3000:3000
