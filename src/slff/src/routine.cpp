@@ -245,6 +245,18 @@ int main(int argc, char **argv)
     //=====Help
     help.init(&NH);
 
+    printf(R"(
+ _______________________
+/ Single Lane Free Flow \
+\ IoT Lab Jasa Marga    /
+ -----------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+)");
+
     if (routine_init() == -1)
         ros::shutdown();
 
