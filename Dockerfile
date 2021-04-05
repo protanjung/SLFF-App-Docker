@@ -1,5 +1,9 @@
 FROM ros:noetic
 
+# Set up the timezone
+ENV TZ=Asia/Jakarta
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+
 # # Install ROS dependencies
 # RUN apt-get update && apt-get install --no-install-recommends -y \
 #     ros-noetic-rosbridge-suite \
