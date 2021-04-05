@@ -245,7 +245,7 @@ int main(int argc, char **argv)
     //=====Help
     help.init(&NH);
 
-    printf(R"(
+    help.log_warn(R"(
  _______________________
 / Single Lane Free Flow \
 \ IoT Lab Jasa Marga    /
