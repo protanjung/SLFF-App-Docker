@@ -245,18 +245,6 @@ int main(int argc, char **argv)
     //=====Help
     help.init(&NH);
 
-    help.log_warn(R"(
- _______________________
-/ Single Lane Free Flow \
-\ IoT Lab Jasa Marga    /
- -----------------------
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
-)");
-
     if (routine_init() == -1)
         ros::shutdown();
 
@@ -789,6 +777,20 @@ void cllbck_sub_rfid_status_response(const slff::rfid_status_responseConstPtr &m
 
 int routine_init()
 {
+    ros::Duration(3).sleep();
+
+    help.log_warn(R"(
+ _______________________
+/ Single Lane Free Flow \
+\ IoT Lab Jasa Marga    /
+ -----------------------
+        \   ^__^
+         \  (oo)\_______
+            (__)\       )\/\
+                ||----w |
+                ||     ||
+)");
+
     slff_json_path = getenv("HOME") + std::string("/slff-data/slff.json");
 
     if (!boost::filesystem::exists(slff_json_path))
