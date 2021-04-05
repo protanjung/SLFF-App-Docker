@@ -21,9 +21,9 @@ Dengan Rahmat Tuhan Yang Maha Kuasa. Dengan ini kami membuat aplikasi Control Un
     ```
 - Menulis parameter di file **slff.yaml**
     ```yaml
-    # ------------------ #
-    # Gerbang Contoh 123 #
-    # ------------------ #
+    # --------------------------------------
+    # Semanggi 1 Gardu 2
+    # --------------------------------------
 
     # Tipe Control Unit
     # ==================
@@ -39,13 +39,13 @@ Dengan Rahmat Tuhan Yang Maha Kuasa. Dengan ini kami membuat aplikasi Control Un
 
     # Nomor Gerbang dan Nomor Gardu
     # =============================
-    no_gerbang: 9
-    no_gardu: 9
+    no_gerbang: 18
+    no_gardu: 2
 
     # MID dan TID
     # ===========
-    mid: "99999999"
-    tid: "99999999"
+    mid: "00000000"
+    tid: "00000000"
 
     # Periph Status Interval
     # ======================
@@ -55,8 +55,8 @@ Dengan Rahmat Tuhan Yang Maha Kuasa. Dengan ini kami membuat aplikasi Control Un
     # RSS
     # ===
     rss:
-        check_url: "0.0.0.0:0000/api/v1/rss/rfid_check"
-        store_url: "0.0.0.0:0000/api/v1/rss/store_data"
+        check_url: "0.0.0.0:6000/api/v1/rss/rfid_check"
+        store_url: "0.0.0.0:6000/api/v1/rss/store_data"
         jm_code: "00000000000000000000000000000000"
 
     # Database
@@ -65,10 +65,10 @@ Dengan Rahmat Tuhan Yang Maha Kuasa. Dengan ini kami membuat aplikasi Control Un
     # database/host: '0.0.0.0' -> IP Address jika tidak menggunakan docker
     # ========
     database:
-        host: 'mysql'
-        name: 'slff'
-        user: 'slff'
-        password: 'slff'
+        host: "mysql"
+        name: "slff"
+        user: "slff"
+        password: "slff"
 
     # Expansion Board
     # ===============
@@ -88,7 +88,7 @@ Dengan Rahmat Tuhan Yang Maha Kuasa. Dengan ini kami membuat aplikasi Control Un
         port: 1
         baud: 115200
         type: 0
-        power: 18
+        power: 20
 
     # GTO
     # ===
