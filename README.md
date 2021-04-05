@@ -1,7 +1,5 @@
-# SLFF App Docker 
-
 <p align="center">
-    <img src="https://i.imgur.com/S8pm7jM.png" width="100" height="100">
+    <img src="https://i.imgur.com/S8pm7jM.png" width="200" height="200">
 </p>
 
 **GitHub Stat(s):**  
@@ -28,6 +26,10 @@ Dengan Rahmat Tuhan Yang Maha Kuasa. Dengan ini kami membuat aplikasi Control Un
     # ------------------ #
 
     # Tipe Control Unit
+    # ==================
+    # tipe_control_unit: 1 -> Open
+    # tipe_control_unit: 2 -> Entrance
+    # tipe_control_unit: 3 -> Exit
     # ==================
     tipe_control_unit: 1
 
@@ -57,6 +59,17 @@ Dengan Rahmat Tuhan Yang Maha Kuasa. Dengan ini kami membuat aplikasi Control Un
         store_url: "0.0.0.0:0000/api/v1/rss/store_data"
         jm_code: "00000000000000000000000000000000"
 
+    # Database
+    # ========
+    # database/host: 'msql'    -> Nama container jika menggunakan docker
+    # database/host: '0.0.0.0' -> IP Address jika tidak menggunakan docker
+    # ========
+    database:
+        host: 'mysql'
+        name: 'slff'
+        user: 'slff'
+        password: 'slff'
+
     # Expansion Board
     # ===============
     expansion:
@@ -65,6 +78,9 @@ Dengan Rahmat Tuhan Yang Maha Kuasa. Dengan ini kami membuat aplikasi Control Un
         baud: 1000000
 
     # RFID
+    # ====
+    # rfid/type: 0 -> Invengo
+    # rfid/type: 1 -> CU1
     # ====
     rfid:
         use_native: true
