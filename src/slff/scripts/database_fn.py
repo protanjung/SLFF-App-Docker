@@ -91,6 +91,7 @@ def replace_tbl_gto_store(db, dbCursor, msg):
             msg.report_month,
             msg.report_day
         ),
+        msg.kode_ruas,
         msg.no_shift,
         msg.no_perioda,
         msg.no_resi,
