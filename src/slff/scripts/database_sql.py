@@ -107,7 +107,7 @@ sql_replace_tbl_gto_notification = \
     ) VALUES (%s, %s, %s, %s, %s, %s);'
 
 sql_replace_tbl_gto_store = \
-    'REPLACE INTO `tbl_gto_present` (\
+    'REPLACE INTO `tbl_gto_store` (\
         `no_seri_control_unit`,\
         `metode_pembayaran`,\
         `rfid_tid`,\

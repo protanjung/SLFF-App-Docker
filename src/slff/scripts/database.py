@@ -51,13 +51,25 @@ def cllbck_sub_gto_store(msg):
 def database_init():
     global localDB
     global localDBCursor
-    localDB = mysql.connector.connect(
-        host=database_host,
-        user=database_user,
-        password=database_password,
-        database=database_name
-    )
-    localDBCursor = localDB.cursor()
+
+    # Try connect to database
+    # =======================
+    try:
+        global localDB
+        global localDBCursor
+        localDB = mysql.connector.connect(
+            host=database_host,
+            user=database_user,
+            password=database_password,
+            database=database_name
+        )
+        localDBCursor = localDB.cursor()
+    # Catch and print error message
+    # =============================
+    except mysql.connector.Error as err:
+        print(err)
+
+        return -1
 
     localDBCursor.execute(db_sql.sql_create_tbl_rfid_tag)
     localDBCursor.execute(db_sql.sql_create_tbl_gto_present)

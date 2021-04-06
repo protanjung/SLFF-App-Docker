@@ -51,7 +51,7 @@ void cllbck_sub_log(const slff::logConstPtr &msg)
     struct tm _tm = *localtime(&_time);
 
     char buffer[64];
-    sprintf(buffer, "slff %04d-%02d-%02d.txt", _tm.tm_year + 1900, _tm.tm_mon + 1, _tm.tm_mday);
+    sprintf(buffer, "slff-%04d-%02d-%02d.txt", _tm.tm_year + 1900, _tm.tm_mon + 1, _tm.tm_mday);
     std::string path = folder_to_make() + "/" + std::string(buffer);
 
     std::string log_header = color::rize(msg->header, "Blue");
@@ -102,7 +102,7 @@ std::string folder_to_make()
     int month = _tm.tm_mon + 1;
 
     char buffer[64];
-    sprintf(buffer, "slff %04d-%02d", year, month);
+    sprintf(buffer, "slff-%04d-%02d", year, month);
     std::string path = log_path + std::string(buffer);
 
     return path;
@@ -123,7 +123,7 @@ std::string folder_to_remove()
     }
 
     char buffer[64];
-    sprintf(buffer, "slff %04d-%02d", year, month);
+    sprintf(buffer, "slff-%04d-%02d", year, month);
     std::string path = log_path + std::string(buffer);
 
     return path;
