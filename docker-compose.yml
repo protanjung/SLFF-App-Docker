@@ -9,6 +9,8 @@ services:
     volumes:
       - ~/slff-data:/root/slff-data
       - /dev:/dev
+    depends_on: 
+      - mysql
 
   mysql:
     container_name: mysql
