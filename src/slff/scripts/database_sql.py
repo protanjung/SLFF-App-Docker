@@ -116,7 +116,7 @@ sql_replace_tbl_gto_store = \
         `exit_datetime`,\
         `report_date`,\
         `kode_ruas`,\
-        `no_shift` \
+        `no_shift`,\
         `no_perioda`,\
         `no_resi`,\
         `no_kspt`,\
