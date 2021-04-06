@@ -106,7 +106,6 @@ sql_replace_tbl_gto_notification = \
         `db_flag`\
     ) VALUES (%s, %s, %s, %s, %s, %s);'
 
-
 sql_replace_tbl_gto_store = \
     'REPLACE INTO `tbl_gto_present` (\
         `no_seri_control_unit`,\
