@@ -52,6 +52,8 @@ def database_init():
     global localDB
     global localDBCursor
 
+    # Try connect to database
+    # =======================
     try:
         global localDB
         global localDBCursor
@@ -62,13 +64,12 @@ def database_init():
             database=database_name
         )
         localDBCursor = localDB.cursor()
+    # Catch and print error message
+    # =============================
     except mysql.connector.Error as err:
-        print("Something went wrong: {}".format(err))
+        print(err)
 
-        # Exit Node
-        # =========
         return -1
-        # =========
 
     localDBCursor.execute(db_sql.sql_create_tbl_rfid_tag)
     localDBCursor.execute(db_sql.sql_create_tbl_gto_present)
