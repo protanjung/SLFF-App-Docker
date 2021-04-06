@@ -39,7 +39,7 @@ Dengan Rahmat Tuhan Yang Maha Kuasa. Dengan ini kami membuat aplikasi Control Un
 
     # Nomor Gerbang dan Nomor Gardu
     # =============================
-    no_gerbang: 18
+    no_gerbang: 10
     no_gardu: 2
 
     # MID dan TID
