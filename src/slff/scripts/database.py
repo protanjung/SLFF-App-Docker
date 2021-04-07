@@ -29,31 +29,35 @@ def cllbck_tim_100hz(event):
 
 
 def cllbck_sub_rfid_tag(msg):
+    db_connect()
     db_fn.replace_tbl_rfid_tag(localDB, localDBCursor, msg)
+    db_close()
 
 
 def cllbck_sub_gto_present(msg):
+    db_connect()
     db_fn.replace_tbl_gto_present(localDB, localDBCursor, msg)
+    db_close()
 
 
 def cllbck_sub_gto_notification(msg):
+    db_connect()
     db_fn.replace_tbl_gto_notification(localDB, localDBCursor, msg)
+    db_close()
 
 
 def cllbck_sub_gto_store(msg):
+    db_connect()
     db_fn.replace_tbl_gto_store(localDB, localDBCursor, msg)
+    db_close()
 
 # =============================================================================
 # -----------------------------------------------------------------------------
 # =============================================================================
 
 
-def database_init():
-    global localDB
-    global localDBCursor
-
+def db_connect():
     # Try connect to database
-    # =======================
     try:
         global localDB
         global localDBCursor
@@ -64,17 +68,37 @@ def database_init():
             database=database_name
         )
         localDBCursor = localDB.cursor()
-    # Catch and print error message
-    # =============================
-    except mysql.connector.Error as err:
-        print(err)
+    # Catch and display error message
+    except:
+        print('')
+        print(mysql.connector.Error)
+        print('')
 
         return -1
 
+    return 0
+
+
+def db_close():
+    global localDB
+    localDB.close()
+
+# =============================================================================
+# -----------------------------------------------------------------------------
+# =============================================================================
+
+
+def database_init():
+    global localDB
+    global localDBCursor
+
+    if db_connect() == -1:
+        return -1
     localDBCursor.execute(db_sql.sql_create_tbl_rfid_tag)
     localDBCursor.execute(db_sql.sql_create_tbl_gto_present)
     localDBCursor.execute(db_sql.sql_create_tbl_gto_notification)
     localDBCursor.execute(db_sql.sql_create_tbl_gto_store)
+    db_close()
 
     return 0
 
