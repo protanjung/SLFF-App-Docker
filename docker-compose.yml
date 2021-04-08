@@ -9,7 +9,7 @@ services:
     volumes:
       - ~/slff-data:/root/slff-data
       - /dev:/dev
-    environment: 
+    environment:
       - TZ=Asia/Jakarta
 
   mysql:
@@ -39,6 +39,18 @@ services:
       - /:/rootfs:ro,rslave
     command:
       - --path.rootfs=/rootfs
+
+  promtail:
+    container_name: promtail
+    image: grafana/promtail
+    restart: always
+    privileged: false
+    volumes:
+      - ~/slff-data:/root/slff-data
+      - ~/slff-data/promtail:/mnt/config
+      - /var/log:/var/log
+    command: 
+      - --config.file=/mnt/config/promtail-config.yaml
 
   cadvisor:
     container_name: cadvisor
