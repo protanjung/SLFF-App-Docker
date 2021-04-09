@@ -1,6 +1,7 @@
 version: "3.8"
 
 services:
+  # SLFF
   slff-app-docker:
     container_name: slff
     build: .
@@ -9,9 +10,10 @@ services:
     volumes:
       - ~/slff-data:/root/slff-data
       - /dev:/dev
-    environment: 
+    environment:
       - TZ=Asia/Jakarta
 
+  # MySQL
   mysql:
     container_name: mysql
     image: mysql
@@ -28,6 +30,7 @@ services:
       - MYSQL_USER=slff
       - MYSQL_PASSWORD=slff
 
+  # Node Exporter
   node_exporter:
     container_name: node_exporter
     image: quay.io/prometheus/node-exporter
@@ -40,22 +43,7 @@ services:
     command:
       - --path.rootfs=/rootfs
 
-  cadvisor:
-    container_name: cadvisor
-    image: gcr.io/cadvisor/cadvisor
-    restart: always
-    privileged: true
-    ports:
-      - 8080:8080
-    volumes:
-      - /:/rootfs:ro
-      - /sys:/sys:ro
-      - /var/run:/var/run:ro
-      - /dev/disk/:/dev/disk:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-    devices:
-      - /dev/kmsg
-
+  # Portainer Agent
   portainer_agent:
     container_name: portainer_agent
     image: portainer/agent
