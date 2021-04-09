@@ -43,47 +43,6 @@ services:
     command:
       - --path.rootfs=/rootfs
 
-  # CAdvisor
-  cadvisor:
-    container_name: cadvisor
-    image: gcr.io/cadvisor/cadvisor
-    restart: always
-    privileged: true
-    ports:
-      - 8080:8080
-    volumes:
-      - /:/rootfs:ro
-      - /sys:/sys:ro
-      - /var/run:/var/run:ro
-      - /dev/disk/:/dev/disk:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-    devices:
-      - /dev/kmsg
-
-  # Loki & Promtail
-  loki:
-    container_name: loki
-    image: grafana/loki
-    restart: always
-    privileged: false
-    ports:
-      - 3100:3100
-    volumes:
-      - ~/slff-data:/root/slff-data
-      - ~/slff-data/loki:/mnt/config
-    command:
-      - --config.file=/mnt/config/loki-config.yaml
-  promtail:
-    container_name: promtail
-    image: grafana/promtail
-    restart: always
-    privileged: false
-    volumes:
-      - ~/slff-data:/root/slff-data
-      - ~/slff-data/promtail:/mnt/config
-    command:
-      - --config.file=/mnt/config/promtail-config.yaml
-
   # Portainer Agent
   portainer_agent:
     container_name: portainer_agent
