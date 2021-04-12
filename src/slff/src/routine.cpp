@@ -859,7 +859,7 @@ bool help_rss_check(uint8_t n)
         JSON_READ_ATOI(j["data"]["entrance_gardu_id"], kr[n].no_gardu_entrance);
         JSON_READ_ATOI(j["data"]["entrance_gerbang_id"], kr[n].no_gerbang_entrance);
         // DateTime entrance
-        if (!j["data"]["entrance_time"].is_null())
+        if (!j["data"]["entrance_time"].is_null() && j["data"]["trans_date"].size() == 19)
         {
             kr[n].entrance_year = std::stoi(std::string(j["data"]["entrance_time"]).substr(2, 2));
             kr[n].entrance_month = std::stoi(std::string(j["data"]["entrance_time"]).substr(5, 2));
@@ -869,7 +869,7 @@ bool help_rss_check(uint8_t n)
             kr[n].entrance_second = std::stoi(std::string(j["data"]["entrance_time"]).substr(17, 2));
         }
         // DateTime transaksi
-        if (!j["data"]["trans_date"].is_null())
+        if (!j["data"]["trans_date"].is_null() && j["data"]["trans_date"].size() == 19)
         {
             kr[n].transaction_year = std::stoi(std::string(j["data"]["trans_date"]).substr(2, 2));
             kr[n].transaction_month = std::stoi(std::string(j["data"]["trans_date"]).substr(5, 2));
