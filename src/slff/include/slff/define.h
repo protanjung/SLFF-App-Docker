@@ -4,6 +4,9 @@
 #define TIPE_OPEN 1
 #define TIPE_ENTRANCE 2
 #define TIPE_EXIT 3
+#define TIPE_OPEN_ENTRANCE 4
+#define TIPE_EXIT_OPEN 5
+#define TIPE_EXIT_ENTRANCE 6
 
 #define RFID_INVENGO 0
 #define RFID_CU1 1

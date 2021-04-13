@@ -140,7 +140,8 @@ void cllbck_sub_gto_present(const slff::gto_presentConstPtr &msg)
 
     // Data
     if (tipe_control_unit == TIPE_OPEN ||
-        tipe_control_unit == TIPE_EXIT)
+        tipe_control_unit == TIPE_EXIT ||
+        tipe_control_unit == TIPE_EXIT_OPEN)
     {
         MEMCPY(tx_buffer + 4, &msg->no_seri_control_unit, 4);
         STRCPY(tx_buffer + 8, msg->rfid_tid, 24);
@@ -179,6 +180,23 @@ void cllbck_sub_gto_present(const slff::gto_presentConstPtr &msg)
         STRCPY(tx_buffer + 88, tid, 10);
         MEMCPY(tx_buffer + 98, &msg->saldo, 4);
         tx_len += 98;
+    }
+    else if (tipe_control_unit == TIPE_OPEN_ENTRANCE)
+    {
+        MEMCPY(tx_buffer + 4, &msg->no_seri_control_unit, 4);
+        STRCPY(tx_buffer + 8, msg->rfid_tid, 24);
+        MEMCPY(tx_buffer + 32, &msg->golongan_kendaraan, 1);
+        MEMCPY(tx_buffer + 33, &msg->jenis_kendaraan, 1);
+        STRCPY(tx_buffer + 34, msg->plat_no_rss, 16);
+        STRCPY(tx_buffer + 50, msg->plat_no_anpr, 16);
+        MEMCPY(tx_buffer + 66, &msg->no_gardu_entrance, 1);
+        MEMCPY(tx_buffer + 67, &msg->no_gerbang_entrance, 1);
+        STRCPY(tx_buffer + 68, mid, 20);
+        STRCPY(tx_buffer + 88, tid, 10);
+        MEMCPY(tx_buffer + 98, &msg->saldo, 4);
+        MEMCPY(tx_buffer + 102, &msg->tarif, 4);
+        STRCPY(tx_buffer + 106, msg->hash, 64);
+        tx_len += 166;
     }
 
     // Checksum
@@ -389,10 +407,13 @@ void gto_parser(uint8_t data)
         else if (rx_buffer[3] == 0x01)
         {
             if (tipe_control_unit == TIPE_OPEN ||
-                tipe_control_unit == TIPE_EXIT)
+                tipe_control_unit == TIPE_EXIT ||
+                tipe_control_unit == TIPE_EXIT_OPEN)
                 frame_length = 123;
             else if (tipe_control_unit == TIPE_ENTRANCE)
                 frame_length = 53;
+            else if (tipe_control_unit == TIPE_OPEN_ENTRANCE)
+                frame_length = 117;
         }
         else if (rx_buffer[3] == 0x03)
         {
@@ -434,7 +455,8 @@ void gto_parser(uint8_t data)
         {
             slff::gto_store msg_gto_store;
             if (tipe_control_unit == TIPE_OPEN ||
-                tipe_control_unit == TIPE_EXIT)
+                tipe_control_unit == TIPE_EXIT ||
+                tipe_control_unit == TIPE_EXIT_OPEN)
             {
                 MEMCPY(&msg_gto_store.no_seri_control_unit, rx_buffer + 4, 4);
                 MEMCPY(&msg_gto_store.metode_pembayaran, rx_buffer + 8, 1);
@@ -477,6 +499,26 @@ void gto_parser(uint8_t data)
                 MEMCPY(&msg_gto_store.report_month, rx_buffer + 40, 1);
                 MEMCPY(&msg_gto_store.report_year, rx_buffer + 41, 1);
                 MEMCPY(&msg_gto_store.kode_ruas, rx_buffer + 42, 1);
+                MEMCPY(&msg_gto_store.no_shift, rx_buffer + 43, 1);
+                MEMCPY(&msg_gto_store.no_perioda, rx_buffer + 44, 1);
+                MEMCPY(&msg_gto_store.no_resi, rx_buffer + 45, 4);
+                MEMCPY(&msg_gto_store.no_kspt, rx_buffer + 49, 4);
+                MEMCPY(&msg_gto_store.no_plt, rx_buffer + 53, 4);
+            }
+            else if (tipe_control_unit == TIPE_OPEN_ENTRANCE)
+            {
+                MEMCPY(&msg_gto_store.no_seri_control_unit, rx_buffer + 4, 4);
+                MEMCPY(&msg_gto_store.metode_pembayaran, rx_buffer + 8, 1);
+                STRCPY2(msg_gto_store.rfid_tid, rx_buffer + 9, 24);
+                MEMCPY(&msg_gto_store.entrance_day, rx_buffer + 33, 1);
+                MEMCPY(&msg_gto_store.entrance_month, rx_buffer + 34, 1);
+                MEMCPY(&msg_gto_store.entrance_year, rx_buffer + 35, 1);
+                MEMCPY(&msg_gto_store.entrance_hour, rx_buffer + 36, 1);
+                MEMCPY(&msg_gto_store.entrance_minute, rx_buffer + 37, 1);
+                MEMCPY(&msg_gto_store.entrance_second, rx_buffer + 38, 1);
+                MEMCPY(&msg_gto_store.report_day, rx_buffer + 39, 1);
+                MEMCPY(&msg_gto_store.report_month, rx_buffer + 40, 1);
+                MEMCPY(&msg_gto_store.report_year, rx_buffer + 41, 1);
                 MEMCPY(&msg_gto_store.no_shift, rx_buffer + 43, 1);
                 MEMCPY(&msg_gto_store.no_perioda, rx_buffer + 44, 1);
                 MEMCPY(&msg_gto_store.no_resi, rx_buffer + 45, 4);

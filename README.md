@@ -26,11 +26,13 @@ Dengan Rahmat Tuhan Yang Maha Kuasa. Dengan ini kami membuat aplikasi Control Un
     # --------------------------------------
 
     # Tipe Control Unit
-    # ==================
+    # =================
     # tipe_control_unit: 1 -> Open
     # tipe_control_unit: 2 -> Entrance
     # tipe_control_unit: 3 -> Exit
-    # ==================
+    # tipe_control_unit: 4 -> Open-Entrance
+    # tipe_control_unit: 5 -> Exit-Open
+    # =================
     tipe_control_unit: 1
 
     # Autentikasi
