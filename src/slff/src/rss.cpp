@@ -144,14 +144,16 @@ bool cllbck_ser_rss_store(slff::rss_store::Request &req, slff::rss_store::Respon
         ADD_FORM(mime, mimepart, "rfid", req.rfid_tid.c_str());
         // No gardu, no gerbang, DateTime entrance dan DateTime exit
         if (tipe_control_unit == TIPE_OPEN ||
-            tipe_control_unit == TIPE_EXIT)
+            tipe_control_unit == TIPE_EXIT ||
+            tipe_control_unit == TIPE_EXIT_OPEN)
         {
             ADD_FORM(mime, mimepart, "gardu_id", std::to_string(req.no_gardu_exit).c_str());
             ADD_FORM(mime, mimepart, "gerbang_id", std::to_string(req.no_gerbang_exit).c_str());
             sprintf(buffer, "%04d-%02d-%02d %02d:%02d:%02d", req.exit_year + 2000, req.exit_month, req.exit_day, req.exit_hour, req.exit_minute, req.exit_second);
             ADD_FORM(mime, mimepart, "gto_timestamp", buffer);
         }
-        else if (tipe_control_unit == TIPE_ENTRANCE)
+        else if (tipe_control_unit == TIPE_ENTRANCE ||
+                 tipe_control_unit == TIPE_OPEN_ENTRANCE)
         {
             ADD_FORM(mime, mimepart, "gardu_id", std::to_string(req.no_gardu_entrance).c_str());
             ADD_FORM(mime, mimepart, "gerbang_id", std::to_string(req.no_gerbang_entrance).c_str());
