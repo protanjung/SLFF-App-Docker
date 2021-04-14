@@ -859,24 +859,32 @@ bool help_rss_check(uint8_t n)
         JSON_READ_ATOI(j["data"]["entrance_gardu_id"], kr[n].no_gardu_entrance);
         JSON_READ_ATOI(j["data"]["entrance_gerbang_id"], kr[n].no_gerbang_entrance);
         // DateTime entrance
-        if (!j["data"]["entrance_time"].is_null() && j["data"]["trans_date"].size() == 19)
+        if (!j["data"]["entrance_time"].is_null())
         {
-            kr[n].entrance_year = std::stoi(std::string(j["data"]["entrance_time"]).substr(2, 2));
-            kr[n].entrance_month = std::stoi(std::string(j["data"]["entrance_time"]).substr(5, 2));
-            kr[n].entrance_day = std::stoi(std::string(j["data"]["entrance_time"]).substr(8, 2));
-            kr[n].entrance_hour = std::stoi(std::string(j["data"]["entrance_time"]).substr(11, 2));
-            kr[n].entrance_minute = std::stoi(std::string(j["data"]["entrance_time"]).substr(14, 2));
-            kr[n].entrance_second = std::stoi(std::string(j["data"]["entrance_time"]).substr(17, 2));
+            std::string entrance_time_buffer = j["data"]["entrance_time"];
+            if (entrance_time_buffer.length() == 19)
+            {
+                kr[n].entrance_year = std::stoi(std::string(j["data"]["entrance_time"]).substr(2, 2));
+                kr[n].entrance_month = std::stoi(std::string(j["data"]["entrance_time"]).substr(5, 2));
+                kr[n].entrance_day = std::stoi(std::string(j["data"]["entrance_time"]).substr(8, 2));
+                kr[n].entrance_hour = std::stoi(std::string(j["data"]["entrance_time"]).substr(11, 2));
+                kr[n].entrance_minute = std::stoi(std::string(j["data"]["entrance_time"]).substr(14, 2));
+                kr[n].entrance_second = std::stoi(std::string(j["data"]["entrance_time"]).substr(17, 2));
+            }
         }
         // DateTime transaksi
-        if (!j["data"]["trans_date"].is_null() && j["data"]["trans_date"].size() == 19)
+        if (!j["data"]["trans_date"].is_null())
         {
-            kr[n].transaction_year = std::stoi(std::string(j["data"]["trans_date"]).substr(2, 2));
-            kr[n].transaction_month = std::stoi(std::string(j["data"]["trans_date"]).substr(5, 2));
-            kr[n].transaction_day = std::stoi(std::string(j["data"]["trans_date"]).substr(8, 2));
-            kr[n].transaction_hour = std::stoi(std::string(j["data"]["trans_date"]).substr(11, 2));
-            kr[n].transaction_minute = std::stoi(std::string(j["data"]["trans_date"]).substr(14, 2));
-            kr[n].transaction_second = std::stoi(std::string(j["data"]["trans_date"]).substr(17, 2));
+            std::string trans_date_buffer = j["data"]["trans_date"];
+            if (trans_date_buffer.length() == 19)
+            {
+                kr[n].transaction_year = std::stoi(std::string(j["data"]["trans_date"]).substr(2, 2));
+                kr[n].transaction_month = std::stoi(std::string(j["data"]["trans_date"]).substr(5, 2));
+                kr[n].transaction_day = std::stoi(std::string(j["data"]["trans_date"]).substr(8, 2));
+                kr[n].transaction_hour = std::stoi(std::string(j["data"]["trans_date"]).substr(11, 2));
+                kr[n].transaction_minute = std::stoi(std::string(j["data"]["trans_date"]).substr(14, 2));
+                kr[n].transaction_second = std::stoi(std::string(j["data"]["trans_date"]).substr(17, 2));
+            }
         }
         // Hash
         JSON_READ(j["data"]["hash"], kr[n].hash_rss);
