@@ -36,7 +36,7 @@ services:
     restart: always
     privileged: false
     ports:
-      - 3306:3306
+      - "3306:3306"
     volumes:
       - ~/slff-data/mysql:/var/lib/mysql
     environment:
@@ -65,7 +65,7 @@ services:
     restart: always
     privileged: false
     ports:
-      - 9001:9001
+      - "9001:9001"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
