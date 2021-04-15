@@ -10,8 +10,24 @@ services:
     volumes:
       - ~/slff-data:/root/slff-data
       - /dev:/dev
+
+  # FTPD
+  ftpd:
+    container_name: ftpd
+    image: stilliard/pure-ftpd
+    restart: always
+    privileged: false
+    ports:
+      - "21:21"
+      - "30000-30009:30000-30009"
+    volumes:
+      - ~/slff-data/log:/root/slff-data/log
     environment:
-      - TZ=Asia/Jakarta
+      - FTP_USER_NAME=jasamarga
+      - FTP_USER_PASS=jasamarga
+      - FTP_USER_HOME=/root/slff-data/log
+      - PUBLICHOST=localhost
+      - ADDED_FLAGS=-d
 
   # MySQL
   mysql:
@@ -24,7 +40,6 @@ services:
     volumes:
       - ~/slff-data/mysql:/var/lib/mysql
     environment:
-      - TZ=Asia/Jakarta
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=slff
       - MYSQL_USER=slff
