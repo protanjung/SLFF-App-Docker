@@ -21,9 +21,9 @@ Dengan Rahmat Tuhan Yang Maha Kuasa. Dengan ini kami membuat aplikasi Control Un
     ```
 - Menulis parameter di file **slff.yaml**
     ```yaml
-    # --------------------------------------
+    # -------------------------------------
     # Semanggi 1 Gardu 2
-    # --------------------------------------
+    # -------------------------------------
 
     # Tipe Control Unit
     # =================
