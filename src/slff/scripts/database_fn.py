@@ -10,9 +10,7 @@ def replace_tbl_rfid_tag(db, dbCursor, msg):
     val = (
         str(msg.epc.hex().upper()),
         str(msg.tid.hex().upper()),
-        str(msg.userdata.hex().upper()),
-        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        False
+        str(msg.userdata.hex().upper())
     )
     dbCursor.execute(sql, val)
     db.commit()
@@ -42,9 +40,7 @@ def replace_tbl_gto_present(db, dbCursor, msg):
             msg.entrance_minute,
             msg.entrance_second
         ),
-        msg.hash,
-        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        False
+        msg.hash
     )
     dbCursor.execute(sql, val)
     db.commit()
@@ -56,9 +52,7 @@ def replace_tbl_gto_notification(db, dbCursor, msg):
         msg.no_seri_control_unit,
         msg.rfid_tid,
         msg.golongan_kendaraan,
-        msg.message.replace('\n', ' '),
-        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        False
+        msg.message.replace('\n', ' ')
     )
     dbCursor.execute(sql, val)
     db.commit()
@@ -97,9 +91,7 @@ def replace_tbl_gto_store(db, dbCursor, msg):
         msg.no_resi,
         msg.no_kspt,
         msg.no_plt,
-        msg.hash,
-        datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'),
-        False
+        msg.hash
     )
     dbCursor.execute(sql, val)
     db.commit()

@@ -98,6 +98,7 @@ def database_init():
     localDBCursor.execute(db_sql.sql_create_tbl_gto_present)
     localDBCursor.execute(db_sql.sql_create_tbl_gto_notification)
     localDBCursor.execute(db_sql.sql_create_tbl_gto_store)
+    localDBCursor.execute(db_sql.sql_create_view_transaction)
     db_close()
 
     return 0
