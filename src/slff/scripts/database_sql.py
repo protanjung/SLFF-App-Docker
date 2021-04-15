@@ -6,7 +6,7 @@ sql_create_tbl_rfid_tag = \
         `epc` TEXT,\
         `tid` TEXT,\
         `userdata` TEXT,\
-        `db_datetime` DATETIME,\
+        `db_timestamp` TIMESTAMP,\
         `db_flag` BOOLEAN,\
         PRIMARY KEY (`id`)\
     );'
@@ -27,7 +27,7 @@ sql_create_tbl_gto_present = \
         `no_gerbang_exit` INT,\
         `entrance_datetime` DATETIME,\
         `hash` TEXT,\
-        `db_datetime` DATETIME,\
+        `db_timestamp` TIMESTAMP,\
         `db_flag` BOOLEAN,\
 	    PRIMARY KEY (`no_seri_control_unit`)\
     );'
@@ -38,7 +38,7 @@ sql_create_tbl_gto_notification = \
         `rfid_tid` TEXT,\
         `golongan_kendaraan` INT,\
         `message` TEXT,\
-        `db_datetime` DATETIME,\
+        `db_timestamp` TIMESTAMP,\
         `db_flag` BOOLEAN,\
         PRIMARY KEY (`no_seri_control_unit`)\
     );'
@@ -58,10 +58,31 @@ sql_create_tbl_gto_store = \
         `no_kspt` INT,\
         `no_plt` INT,\
         `hash` TEXT,\
-        `db_datetime` DATETIME,\
+        `db_timestamp` TIMESTAMP,\
         `db_flag` BOOLEAN,\
         PRIMARY KEY (`no_seri_control_unit`)\
     );'
+
+# =============================================================================
+# -----------------------------------------------------------------------------
+# =============================================================================
+
+sql_create_view_transaction = \
+    'CREATE \
+    OR REPLACE VIEW view_transaction AS \
+    SELECT\
+        tgs.rfid_tid,\
+        tgp.tarif,\
+        tgp.saldo,\
+        tgs.db_timestamp,\
+        tgs.db_flag \
+    FROM\
+        tbl_gto_present tgp \
+        INNER JOIN\
+            tbl_gto_store tgs \
+            ON tgp.no_seri_control_unit = tgs.no_seri_control_unit \
+    WHERE\
+        tgs.metode_pembayaran = 0'\
 
 # =============================================================================
 # -----------------------------------------------------------------------------
@@ -72,9 +93,9 @@ sql_replace_tbl_rfid_tag = \
         `epc`,\
         `tid`,\
         `userdata`,\
-        `db_datetime`,\
+        `db_timestamp`,\
         `db_flag`\
-    ) VALUES (%s, %s, %s, %s, %s);'
+    ) VALUES (%s, %s, %s, NOW(), 0);'
 
 sql_replace_tbl_gto_present = \
     'REPLACE INTO `tbl_gto_present` (\
@@ -92,9 +113,9 @@ sql_replace_tbl_gto_present = \
         `no_gerbang_exit`,\
         `entrance_datetime`,\
         `hash`,\
-        `db_datetime`,\
+        `db_timestamp`,\
         `db_flag`\
-    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), 0);'
 
 sql_replace_tbl_gto_notification = \
     'REPLACE INTO `tbl_gto_notification` (\
@@ -102,9 +123,9 @@ sql_replace_tbl_gto_notification = \
         `rfid_tid`,\
         `golongan_kendaraan`,\
         `message`,\
-        `db_datetime`,\
+        `db_timestamp`,\
         `db_flag`\
-    ) VALUES (%s, %s, %s, %s, %s, %s);'
+    ) VALUES (%s, %s, %s, %s, NOW(), 0);'
 
 sql_replace_tbl_gto_store = \
     'REPLACE INTO `tbl_gto_store` (\
@@ -121,6 +142,6 @@ sql_replace_tbl_gto_store = \
         `no_kspt`,\
         `no_plt`,\
         `hash`,\
-        `db_datetime`,\
+        `db_timestamp`,\
         `db_flag`\
-    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s);'
+    ) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, NOW(), 0);'
