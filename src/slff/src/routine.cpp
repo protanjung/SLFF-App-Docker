@@ -2,6 +2,8 @@
 #include "boost/thread/mutex.hpp"
 #include "ros/ros.h"
 #include "slff/define.h"
+#include "slff/exporter_peripheral_status.h"
+#include "slff/exporter_version.h"
 #include "slff/gto_ack.h"
 #include "slff/gto_init.h"
 #include "slff/gto_notification.h"
@@ -10,7 +12,6 @@
 #include "slff/gto_status_response.h"
 #include "slff/gto_store.h"
 #include "slff/misc.h"
-#include "slff/peripheral_status.h"
 #include "slff/rfid_ack.h"
 #include "slff/rfid_status_request.h"
 #include "slff/rfid_status_response.h"
@@ -91,7 +92,8 @@ ros::Publisher pub_gto_notification;
 ros::Publisher pub_gto_ack;
 ros::Publisher pub_gto_status_request;
 ros::Publisher pub_rfid_status_request;
-ros::Publisher pub_peripheral_status;
+ros::Publisher pub_exporter_peripheral_status;
+ros::Publisher pub_exporter_version;
 //=====ServiceClient
 ros::ServiceClient cli_rss_check;
 ros::ServiceClient cli_rss_store;
@@ -244,7 +246,8 @@ int main(int argc, char **argv)
     pub_gto_ack = NH.advertise<slff::gto_ack>("gto/ack", 0);
     pub_gto_status_request = NH.advertise<slff::gto_status_request>("gto/status_request", 0);
     pub_rfid_status_request = NH.advertise<slff::rfid_status_request>("rfid/status_request", 0);
-    pub_peripheral_status = NH.advertise<slff::peripheral_status>("peripheral_status", 0);
+    pub_exporter_peripheral_status = NH.advertise<slff::exporter_peripheral_status>("exporter/peripheral_status", 0);
+    pub_exporter_version = NH.advertise<slff::exporter_version>("exporter/version", 0);
     //=====ServiceClient
     cli_rss_check = NH.serviceClient<slff::rss_check>("rss/check");
     cli_rss_store = NH.serviceClient<slff::rss_store>("rss/store");
@@ -612,10 +615,14 @@ void cllbck_tim_53hz(const ros::TimerEvent &event)
 // Rutin MISC
 void cllbck_tim_1hz(const ros::TimerEvent &event)
 {
-    slff::peripheral_status msg_peripheral_status;
-    msg_peripheral_status.gto = gto_status.status;
-    msg_peripheral_status.rfid = rfid_status.status;
-    pub_peripheral_status.publish(msg_peripheral_status);
+    slff::exporter_peripheral_status msg_exporter_peripheral_status;
+    msg_exporter_peripheral_status.gto = gto_status.status;
+    msg_exporter_peripheral_status.rfid = rfid_status.status;
+    pub_exporter_peripheral_status.publish(msg_exporter_peripheral_status);
+
+    slff::exporter_version msg_exporter_version;
+    msg_exporter_version.version = std::string(version);
+    pub_exporter_version.publish(msg_exporter_version);
 }
 
 //=============================================================================
