@@ -8,4 +8,5 @@
     <node name="gto" type="gto" pkg="slff" output="screen" respawn="true" />
     <node name="rfid" type="rfid" pkg="slff" output="screen" respawn="true" />
     <node name="database" type="database.py" pkg="slff" output="screen" respawn="true" />
+    <node name="exporter" type="exporter.py" pkg="slff" output="screen" respawn="true" />
 </launch>

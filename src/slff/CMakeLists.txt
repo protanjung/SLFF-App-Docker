@@ -65,6 +65,7 @@ add_message_files(
   gto_init.msg
   gto_status_request.msg
   gto_status_response.msg
+  peripheral_status.msg
 )
 
 ## Generate services in the 'srv' folder

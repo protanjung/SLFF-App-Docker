@@ -10,6 +10,7 @@
 #include "slff/gto_status_response.h"
 #include "slff/gto_store.h"
 #include "slff/misc.h"
+#include "slff/peripheral_status.h"
 #include "slff/rfid_ack.h"
 #include "slff/rfid_status_request.h"
 #include "slff/rfid_status_response.h"
@@ -25,6 +26,7 @@ void cllbck_tim_100hz(const ros::TimerEvent &event);
 void cllbck_tim_101hz(const ros::TimerEvent &event);
 void cllbck_tim_102hz(const ros::TimerEvent &event);
 void cllbck_tim_50hz(const ros::TimerEvent &event);
+void cllbck_tim_1hz(const ros::TimerEvent &event);
 
 void cllbck_sub_rfid_tag(const slff::rfid_tagConstPtr &msg);
 void cllbck_sub_gto_store(const slff::gto_storeConstPtr &msg);
@@ -75,6 +77,7 @@ ros::Timer tim_100hz;
 ros::Timer tim_101hz;
 ros::Timer tim_102hz;
 ros::Timer tim_50hz;
+ros::Timer tim_1hz;
 //=====Subscriber
 ros::Subscriber sub_rfid_tag;
 ros::Subscriber sub_gto_store;
@@ -88,6 +91,7 @@ ros::Publisher pub_gto_notification;
 ros::Publisher pub_gto_ack;
 ros::Publisher pub_gto_status_request;
 ros::Publisher pub_rfid_status_request;
+ros::Publisher pub_peripheral_status;
 //=====ServiceClient
 ros::ServiceClient cli_rss_check;
 ros::ServiceClient cli_rss_store;
@@ -196,12 +200,13 @@ int no_seri_control_unit = 1;
 //=====Peripheral Status
 typedef struct
 {
-    uint8_t status = -1;
+    uint8_t status = 255;
     double datetime = 0;
 } periph_status;
 
-periph_status gto_status[2];
-periph_status rfid_status[2];
+double peripheral_status_timer;
+periph_status gto_status;
+periph_status rfid_status;
 double gto_status_timer;
 double rfid_status_timer;
 
@@ -226,6 +231,7 @@ int main(int argc, char **argv)
     tim_101hz = NH.createTimer(ros::Duration(0.01), cllbck_tim_101hz);
     tim_102hz = NH.createTimer(ros::Duration(0.01), cllbck_tim_102hz);
     tim_50hz = NH.createTimer(ros::Duration(0.02), cllbck_tim_50hz);
+    tim_1hz = NH.createTimer(ros::Duration(1), cllbck_tim_1hz);
     //=====Subscriber
     sub_rfid_tag = NH.subscribe("rfid/tag", 0, cllbck_sub_rfid_tag);
     sub_gto_store = NH.subscribe("gto/store", 0, cllbck_sub_gto_store);
@@ -239,6 +245,7 @@ int main(int argc, char **argv)
     pub_gto_ack = NH.advertise<slff::gto_ack>("gto/ack", 0);
     pub_gto_status_request = NH.advertise<slff::gto_status_request>("gto/status_request", 0);
     pub_rfid_status_request = NH.advertise<slff::rfid_status_request>("rfid/status_request", 0);
+    pub_peripheral_status = NH.advertise<slff::peripheral_status>("peripheral_status", 0);
     //=====ServiceClient
     cli_rss_check = NH.serviceClient<slff::rss_check>("rss/check");
     cli_rss_store = NH.serviceClient<slff::rss_store>("rss/store");
@@ -536,14 +543,20 @@ void cllbck_tim_50hz(const ros::TimerEvent &event)
 
         //-----------------------------
 
-        if (ros::Time::now().toSec() - gto_status[0].datetime > gto_status_interval + 0.1)
+        if (ros::Time::now().toSec() - gto_status.datetime > gto_status_interval + 0.1)
         {
+            gto_status.status = 255;
+
+            //---------------------------------
+
             boost::posix_time::ptime time_ptime = boost::posix_time::microsec_clock::local_time();
             std::string time_string = boost::posix_time::to_simple_string(time_ptime);
 
-            JSON_WRITE(slff_json["gto_status"]["status"], 255);
+            JSON_WRITE(slff_json["gto_status"]["status"], gto_status.status);
             JSON_WRITE(slff_json["gto_status"]["datetime"], time_string);
             json_write(slff_json_path, slff_json);
+
+            //---------------------------------
 
             // Menampilkan summary
             help.log_error("====> GTO_STATUS_RESPONSE Timeout");
@@ -568,14 +581,20 @@ void cllbck_tim_50hz(const ros::TimerEvent &event)
 
         //-----------------------------
 
-        if (ros::Time::now().toSec() - rfid_status[0].datetime > rfid_status_interval + 0.1)
+        if (ros::Time::now().toSec() - rfid_status.datetime > rfid_status_interval + 0.1)
         {
+            rfid_status.status = 255;
+
+            //---------------------------------
+
             boost::posix_time::ptime time_ptime = boost::posix_time::microsec_clock::local_time();
             std::string time_string = boost::posix_time::to_simple_string(time_ptime);
 
-            JSON_WRITE(slff_json["rfid_status"]["status"], 255);
+            JSON_WRITE(slff_json["rfid_status"]["status"], rfid_status.status);
             JSON_WRITE(slff_json["rfid_status"]["datetime"], time_string);
             json_write(slff_json_path, slff_json);
+
+            //---------------------------------
 
             // Menampilkan summary
             help.log_error("====> RFID_STATUS_RESPONSE Timeout");
@@ -588,6 +607,24 @@ void cllbck_tim_50hz(const ros::TimerEvent &event)
 
         // Menampilkan summary
         help.log_warn("====> RFID_STATUS_REQUEST Success");
+    }
+}
+
+// Rutin MISC
+void cllbck_tim_1hz(const ros::TimerEvent &event)
+{
+    // Peripheral status publish
+    //--------------------------
+    if (ros::Time::now().toSec() - peripheral_status_timer > 1)
+    {
+        peripheral_status_timer = ros::Time::now().toSec();
+
+        //-----------------------------
+
+        slff::peripheral_status msg_peripheral_status;
+        msg_peripheral_status.gto = gto_status.status;
+        msg_peripheral_status.rfid = rfid_status.status;
+        pub_peripheral_status.publish(msg_peripheral_status);
     }
 }
 
@@ -729,15 +766,15 @@ void cllbck_sub_gto_init(const slff::gto_initConstPtr &msg)
 
 void cllbck_sub_gto_status_response(const slff::gto_status_responseConstPtr &msg)
 {
-    gto_status[0].status = msg->status == 0 ? 0 : 1;
-    gto_status[0].datetime = ros::Time::now().toSec();
+    gto_status.status = msg->status == 0 ? 0 : 1;
+    gto_status.datetime = ros::Time::now().toSec();
 
     //---------------------------------
 
     boost::posix_time::ptime time_ptime = boost::posix_time::microsec_clock::local_time();
     std::string time_string = boost::posix_time::to_simple_string(time_ptime);
 
-    JSON_WRITE(slff_json["gto_status"]["status"], gto_status[0].status);
+    JSON_WRITE(slff_json["gto_status"]["status"], gto_status.status);
     JSON_WRITE(slff_json["gto_status"]["datetime"], time_string);
     json_write(slff_json_path, slff_json);
 
@@ -745,21 +782,21 @@ void cllbck_sub_gto_status_response(const slff::gto_status_responseConstPtr &msg
 
     // Menampilkan summary
     help.log_warn("====> GTO_STATUS_RESPONSE Success");
-    help.log_info("status = %d", gto_status[0].status);
+    help.log_info("status = %d", gto_status.status);
     help_gto_ack_ok();
 }
 
 void cllbck_sub_rfid_status_response(const slff::rfid_status_responseConstPtr &msg)
 {
-    rfid_status[0].status = msg->status == 0 ? 0 : 1;
-    rfid_status[0].datetime = ros::Time::now().toSec();
+    rfid_status.status = msg->status == 0 ? 0 : 1;
+    rfid_status.datetime = ros::Time::now().toSec();
 
     //---------------------------------
 
     boost::posix_time::ptime time_ptime = boost::posix_time::microsec_clock::local_time();
     std::string time_string = boost::posix_time::to_simple_string(time_ptime);
 
-    JSON_WRITE(slff_json["rfid_status"]["status"], rfid_status[0].status);
+    JSON_WRITE(slff_json["rfid_status"]["status"], rfid_status.status);
     JSON_WRITE(slff_json["rfid_status"]["datetime"], time_string);
     json_write(slff_json_path, slff_json);
 
@@ -767,7 +804,7 @@ void cllbck_sub_rfid_status_response(const slff::rfid_status_responseConstPtr &m
 
     // Menampilkan summary
     help.log_warn("====> RFID_STATUS_RESPONSE Success");
-    help.log_info("status = %d", rfid_status[0].status);
+    help.log_info("status = %d", rfid_status.status);
     help_rfid_ack_ok();
 }
 
@@ -814,12 +851,9 @@ int routine_init()
         //----------------------------------------
     }
 
+    gto_status.status = rfid_status.status = 255;
+    gto_status.datetime = rfid_status.datetime = ros::Time::now().toSec();
     gto_status_timer = rfid_status_timer = ros::Time::now().toSec();
-    for (int i = 0; i < 2; i++)
-    {
-        gto_status[i].status = rfid_status[i].status = -1;
-        gto_status[i].datetime = rfid_status[i].datetime = ros::Time::now().toSec();
-    }
 
     return 0;
 }
