@@ -20,7 +20,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Install python dependencies
-RUN /bin/bash -c 'pip3 install mysql-connector-python'
+RUN /bin/bash -c 'pip3 install mysql-connector-python prometheus_client'
 
 # Make directory for application and application data
 RUN /bin/bash -c 'mkdir -p /root/slff-data'
