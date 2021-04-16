@@ -12,7 +12,7 @@ slff_peripheral_status = Gauge("slff_peripheral_status", "Peripheral status", ["
 # =============================================================================
 
 
-def cllbck_tim_100hz(event):
+def cllbck_tim_1hz(event):
     if(exporter_routine() == -1):
         rospy.signal_shutdown("signal_shutdown")
 
@@ -47,14 +47,14 @@ def exporter_routine():
 
 if __name__ == "__main__":
     # Timer
-    global tim_100hz
+    global tim_1hz
     # Subscriber
     global sub_peripheral_status
 
     rospy.init_node('exporter')
 
     # Timer
-    tim_100hz = rospy.Timer(rospy.Duration(0.01), cllbck_tim_100hz)
+    tim_1hz = rospy.Timer(rospy.Duration(1), cllbck_tim_1hz)
     # Subscriber
     sub_peripheral_status = rospy.Subscriber('peripheral_status', peripheral_status, cllbck_sub_peripheral_status)
 
