@@ -19,7 +19,7 @@ localDBCursor = None
 # =============================================================================
 
 
-def cllbck_tim_100hz(event):
+def cllbck_tim_1hz(event):
     if database_routine() == -1:
         rospy.signal_shutdown("signal shutdown")
 
@@ -120,7 +120,7 @@ if __name__ == '__main__':
     global database_user
     global database_password
     # Timer
-    global tim_100hz
+    global tim_1hz
     # Subscriber
     global sub_rfid_tag
     global sub_gto_present
@@ -135,7 +135,7 @@ if __name__ == '__main__':
     database_user = rospy.get_param('database/user', 'slff')
     database_password = rospy.get_param('database/password', 'slff')
     # Timer
-    tim_100hz = rospy.Timer(rospy.Duration(0.01), cllbck_tim_100hz)
+    tim_1hz = rospy.Timer(rospy.Duration(1), cllbck_tim_1hz)
     # Subscriber
     sub_rfid_tag = rospy.Subscriber('rfid/tag', rfid_tag, cllbck_sub_rfid_tag)
     sub_gto_present = rospy.Subscriber('gto/present', gto_present, cllbck_sub_gto_present)

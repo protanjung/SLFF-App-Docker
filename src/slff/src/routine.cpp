@@ -2,6 +2,8 @@
 #include "boost/thread/mutex.hpp"
 #include "ros/ros.h"
 #include "slff/define.h"
+#include "slff/exporter_peripheral_status.h"
+#include "slff/exporter_version.h"
 #include "slff/gto_ack.h"
 #include "slff/gto_init.h"
 #include "slff/gto_notification.h"
@@ -10,7 +12,6 @@
 #include "slff/gto_status_response.h"
 #include "slff/gto_store.h"
 #include "slff/misc.h"
-#include "slff/peripheral_status.h"
 #include "slff/rfid_ack.h"
 #include "slff/rfid_status_request.h"
 #include "slff/rfid_status_response.h"
@@ -22,10 +23,10 @@
 #include <deque>
 
 //=====Prototype
-void cllbck_tim_100hz(const ros::TimerEvent &event);
-void cllbck_tim_101hz(const ros::TimerEvent &event);
-void cllbck_tim_102hz(const ros::TimerEvent &event);
 void cllbck_tim_50hz(const ros::TimerEvent &event);
+void cllbck_tim_51hz(const ros::TimerEvent &event);
+void cllbck_tim_52hz(const ros::TimerEvent &event);
+void cllbck_tim_53hz(const ros::TimerEvent &event);
 void cllbck_tim_1hz(const ros::TimerEvent &event);
 
 void cllbck_sub_rfid_tag(const slff::rfid_tagConstPtr &msg);
@@ -73,10 +74,10 @@ bool auth_rfid;
 double gto_status_interval;
 double rfid_status_interval;
 //=====Timer
-ros::Timer tim_100hz;
-ros::Timer tim_101hz;
-ros::Timer tim_102hz;
 ros::Timer tim_50hz;
+ros::Timer tim_51hz;
+ros::Timer tim_52hz;
+ros::Timer tim_53hz;
 ros::Timer tim_1hz;
 //=====Subscriber
 ros::Subscriber sub_rfid_tag;
@@ -91,7 +92,8 @@ ros::Publisher pub_gto_notification;
 ros::Publisher pub_gto_ack;
 ros::Publisher pub_gto_status_request;
 ros::Publisher pub_rfid_status_request;
-ros::Publisher pub_peripheral_status;
+ros::Publisher pub_exporter_peripheral_status;
+ros::Publisher pub_exporter_version;
 //=====ServiceClient
 ros::ServiceClient cli_rss_check;
 ros::ServiceClient cli_rss_store;
@@ -204,7 +206,6 @@ typedef struct
     double datetime = 0;
 } periph_status;
 
-double peripheral_status_timer;
 periph_status gto_status;
 periph_status rfid_status;
 double gto_status_timer;
@@ -227,10 +228,10 @@ int main(int argc, char **argv)
     NH.getParam("gto_status_interval", gto_status_interval);
     NH.getParam("rfid_status_interval", rfid_status_interval);
     //=====Timer
-    tim_100hz = NH.createTimer(ros::Duration(0.01), cllbck_tim_100hz);
-    tim_101hz = NH.createTimer(ros::Duration(0.01), cllbck_tim_101hz);
-    tim_102hz = NH.createTimer(ros::Duration(0.01), cllbck_tim_102hz);
     tim_50hz = NH.createTimer(ros::Duration(0.02), cllbck_tim_50hz);
+    tim_51hz = NH.createTimer(ros::Duration(0.02), cllbck_tim_51hz);
+    tim_52hz = NH.createTimer(ros::Duration(0.02), cllbck_tim_52hz);
+    tim_53hz = NH.createTimer(ros::Duration(0.02), cllbck_tim_53hz);
     tim_1hz = NH.createTimer(ros::Duration(1), cllbck_tim_1hz);
     //=====Subscriber
     sub_rfid_tag = NH.subscribe("rfid/tag", 0, cllbck_sub_rfid_tag);
@@ -245,7 +246,8 @@ int main(int argc, char **argv)
     pub_gto_ack = NH.advertise<slff::gto_ack>("gto/ack", 0);
     pub_gto_status_request = NH.advertise<slff::gto_status_request>("gto/status_request", 0);
     pub_rfid_status_request = NH.advertise<slff::rfid_status_request>("rfid/status_request", 0);
-    pub_peripheral_status = NH.advertise<slff::peripheral_status>("peripheral_status", 0);
+    pub_exporter_peripheral_status = NH.advertise<slff::exporter_peripheral_status>("exporter/peripheral_status", 0);
+    pub_exporter_version = NH.advertise<slff::exporter_version>("exporter/version", 0);
     //=====ServiceClient
     cli_rss_check = NH.serviceClient<slff::rss_check>("rss/check");
     cli_rss_store = NH.serviceClient<slff::rss_store>("rss/store");
@@ -263,12 +265,12 @@ int main(int argc, char **argv)
 //=============================================================================
 
 // Rutin RSS_CHECK
-void cllbck_tim_100hz(const ros::TimerEvent &event)
+void cllbck_tim_50hz(const ros::TimerEvent &event)
 {
     if (kr.size() == 0)
         return;
 
-    tim_100hz.stop();
+    tim_50hz.stop();
     mutex_kr.lock();
 
     int i;
@@ -306,16 +308,16 @@ void cllbck_tim_100hz(const ros::TimerEvent &event)
     }
 
     mutex_kr.unlock();
-    tim_100hz.start();
+    tim_50hz.start();
 }
 
 // Rutin GTO_PRESENT dan GTO_NOTIFICATION
-void cllbck_tim_101hz(const ros::TimerEvent &event)
+void cllbck_tim_51hz(const ros::TimerEvent &event)
 {
     if (kr.size() == 0)
         return;
 
-    tim_101hz.stop();
+    tim_51hz.stop();
     mutex_kr.lock();
 
     int i;
@@ -444,16 +446,16 @@ void cllbck_tim_101hz(const ros::TimerEvent &event)
     }
 
     mutex_kr.unlock();
-    tim_101hz.start();
+    tim_51hz.start();
 }
 
 // Rutin RSS_STORE
-void cllbck_tim_102hz(const ros::TimerEvent &event)
+void cllbck_tim_52hz(const ros::TimerEvent &event)
 {
     if (kr.size() == 0)
         return;
 
-    tim_102hz.stop();
+    tim_52hz.stop();
     mutex_kr.lock();
 
     int i;
@@ -529,11 +531,11 @@ void cllbck_tim_102hz(const ros::TimerEvent &event)
     }
 
     mutex_kr.unlock();
-    tim_102hz.start();
+    tim_52hz.start();
 }
 
 // Rutin MISC
-void cllbck_tim_50hz(const ros::TimerEvent &event)
+void cllbck_tim_53hz(const ros::TimerEvent &event)
 {
     // Status GTO request
     //-------------------
@@ -613,19 +615,14 @@ void cllbck_tim_50hz(const ros::TimerEvent &event)
 // Rutin MISC
 void cllbck_tim_1hz(const ros::TimerEvent &event)
 {
-    // Peripheral status publish
-    //--------------------------
-    if (ros::Time::now().toSec() - peripheral_status_timer > 1)
-    {
-        peripheral_status_timer = ros::Time::now().toSec();
+    slff::exporter_peripheral_status msg_exporter_peripheral_status;
+    msg_exporter_peripheral_status.gto = gto_status.status;
+    msg_exporter_peripheral_status.rfid = rfid_status.status;
+    pub_exporter_peripheral_status.publish(msg_exporter_peripheral_status);
 
-        //-----------------------------
-
-        slff::peripheral_status msg_peripheral_status;
-        msg_peripheral_status.gto = gto_status.status;
-        msg_peripheral_status.rfid = rfid_status.status;
-        pub_peripheral_status.publish(msg_peripheral_status);
-    }
+    slff::exporter_version msg_exporter_version;
+    msg_exporter_version.version = std::string(version);
+    pub_exporter_version.publish(msg_exporter_version);
 }
 
 //=============================================================================
