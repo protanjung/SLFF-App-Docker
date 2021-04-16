@@ -10,6 +10,8 @@ services:
     volumes:
       - ~/slff-data:/root/slff-data
       - /dev:/dev
+    ports:
+      - "8100:8100"
 
   # FTPD
   ftpd:
