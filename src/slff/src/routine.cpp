@@ -811,7 +811,7 @@ void cllbck_sub_rfid_status_response(const slff::rfid_status_responseConstPtr &m
 
 int routine_init()
 {
-    ros::Duration(3).sleep();
+    ros::Duration(2.5).sleep();
 
     help.log_warn(R"(
  _______________________
