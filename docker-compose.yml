@@ -4,14 +4,14 @@ services:
   # SLFF
   slff:
     container_name: slff
-    build: .
+    image: protanjung/slff-app-docker
     restart: always
     privileged: true
+    ports:
+      - "8100:8100"
     volumes:
       - ~/slff-data:/root/slff-data
       - /dev:/dev
-    ports:
-      - "8100:8100"
 
   # FTPD
   ftpd:
@@ -29,7 +29,7 @@ services:
       - FTP_USER_PASS=jasamarga
       - FTP_USER_HOME=/root/slff-data/log
       - PUBLICHOST=localhost
-      - ADDED_FLAGS=-d
+      - ADDED_FLAGS=-d -d
 
   # MySQL
   mysql:
@@ -71,3 +71,21 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /var/lib/docker/volumes:/var/lib/docker/volumes
+
+  # Watchtower
+  watchtower:
+    container_name: watchtower 
+    image: containrrr/watchtower
+    restart: always
+    privileged: false
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /var/lib/docker/volumes:/var/lib/docker/volumes
+    environment:
+      - WATCHTOWER_CLEANUP=true
+      - WATCHTOWER_REMOVE_VOLUMES=true
+      - WATCHTOWER_DEBUG=true
+      - WATCHTOWER_TRACE=true
+      - WATCHTOWER_SCHEDULE=0 0 20 * * *
+    command: 
+      - slff
