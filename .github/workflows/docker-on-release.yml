@@ -36,7 +36,7 @@ jobs:
         file: ./Dockerfile
         platforms: linux/amd64,linux/arm64
         push: true
-        tags: protanjung/slff-app-docker:${{ steps.previous_tag.outputs.tag }}
+        tags: protanjung/slff-app-docker:latest,protanjung/slff-app-docker:${{ steps.previous_tag.outputs.tag }}
 
     - name: Update Repo Description
       uses: peter-evans/dockerhub-description@v2
