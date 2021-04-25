@@ -63,7 +63,7 @@ Dengan Rahmat Tuhan Yang Maha Kuasa. Dengan ini kami membuat aplikasi Control Un
 
     # Database
     # ========
-    # database/host: 'msql'    -> Nama container jika menggunakan docker
+    # database/host: 'mysql'   -> Nama container jika menggunakan docker
     # database/host: '0.0.0.0' -> IP Address jika tidak menggunakan docker
     # ========
     database:
