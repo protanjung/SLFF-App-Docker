@@ -86,6 +86,7 @@ services:
       - WATCHTOWER_REMOVE_VOLUMES=true
       - WATCHTOWER_DEBUG=true
       - WATCHTOWER_TRACE=true
-      - WATCHTOWER_SCHEDULE=0 0 20 * * *
+      - WATCHTOWER_POLL_INTERVAL=10800
+      - WATCHTOWER_MONITOR_ONLY=true
     command: 
       - slff
