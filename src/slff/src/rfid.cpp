@@ -12,8 +12,8 @@
 #define BUFFLEN 512
 
 //=====Prototype
-void cllbck_tim_100hz(const ros::TimerEvent &event);
-void cllbck_tim_101hz(const ros::TimerEvent &event);
+void cllbck_tim_50hz(const ros::TimerEvent &event);
+void cllbck_tim_51hz(const ros::TimerEvent &event);
 
 void cllbck_sub_rfid_ack(const slff::rfid_ackConstPtr &msg);
 void cllbck_sub_rfid_status_request(const slff::rfid_status_requestConstPtr &msg);
@@ -23,7 +23,9 @@ int rfid_init();
 int rfid_routine();
 void rfid_parser(uint8_t data);
 
+void invengo_init();
 void invengo_parser(uint8_t data);
+void cu1_init();
 void cu1_parser(uint8_t data);
 
 void rfid_entry(std::vector<uint8_t> epc, std::vector<uint8_t> tid, std::vector<uint8_t> userdata);
@@ -36,8 +38,8 @@ int rfid_baud;
 int rfid_type;
 int rfid_power;
 //=====Timer
-ros::Timer tim_100hz;
-ros::Timer tim_101hz;
+ros::Timer tim_50hz;
+ros::Timer tim_51hz;
 //=====Subscriber
 ros::Subscriber sub_rfid_ack;
 ros::Subscriber sub_rfid_status_request;
@@ -122,6 +124,8 @@ typedef struct
     double time;
 } rfid;
 
+double last_rfid_time;
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "rfid");
@@ -137,8 +141,8 @@ int main(int argc, char **argv)
     NH.getParam("rfid/type", rfid_type);
     NH.getParam("rfid/power", rfid_power);
     //=====Timer
-    tim_100hz = NH.createTimer(ros::Duration(0.01), cllbck_tim_100hz);
-    tim_101hz = NH.createTimer(ros::Duration(0.01), cllbck_tim_101hz);
+    tim_50hz = NH.createTimer(ros::Duration(0.02), cllbck_tim_50hz);
+    tim_51hz = NH.createTimer(ros::Duration(0.02), cllbck_tim_51hz);
     //=====Subscriber
     sub_rfid_ack = NH.subscribe("rfid/ack", 0, cllbck_sub_rfid_ack);
     sub_rfid_status_request = NH.subscribe("rfid/status_request", 0, cllbck_sub_rfid_status_request);
@@ -161,14 +165,24 @@ int main(int argc, char **argv)
 //-----------------------------------------------------------------------------
 //=============================================================================
 
-void cllbck_tim_100hz(const ros::TimerEvent &event)
+void cllbck_tim_50hz(const ros::TimerEvent &event)
 {
     if (rfid_routine() == -1)
         ros::shutdown();
 }
 
-void cllbck_tim_101hz(const ros::TimerEvent &event)
+void cllbck_tim_51hz(const ros::TimerEvent &event)
 {
+    // Inisialisasi ulang rfid jika idle selama 60 detik
+    if (ros::Time::now().toSec() - last_rfid_time > 60)
+    {
+        last_rfid_time = ros::Time::now().toSec();
+
+        if (rfid_type == RFID_INVENGO)
+            invengo_init();
+        else if (rfid_type == RFID_CU1)
+            cu1_init();
+    }
 }
 
 //=============================================================================
@@ -206,6 +220,8 @@ void cllbck_sub_rs232_rx(const slff::rs232_dataConstPtr &msg)
 
 int rfid_init()
 {
+    last_rfid_time = ros::Time::now().toSec();
+
     if (rfid_use_native)
     {
         if (sp_get_port_by_name(realpath(rfid_port_native.c_str(), NULL), &serial_port) != SP_OK)
@@ -223,69 +239,18 @@ int rfid_init()
             return -1;
         if (sp_set_stopbits(serial_port, 1) != SP_OK)
             return -1;
-
-        if (rfid_type == RFID_INVENGO)
-        {
-            if (rfid_power < 11)
-                rfid_power = 0;
-            else if (rfid_power > 30)
-                rfid_power = 19;
-            else
-                rfid_power -= 11;
-
-            // Stop
-            ros::Duration(0.1).sleep();
-            sp_nonblocking_write(serial_port, invengo_stop, sizeof(invengo_stop));
-            // Config mode
-            ros::Duration(0.1).sleep();
-            sp_nonblocking_write(serial_port, invengo_config_mode, sizeof(invengo_config_mode));
-            // Config time
-            ros::Duration(0.1).sleep();
-            sp_nonblocking_write(serial_port, invengo_config_time, sizeof(invengo_config_time));
-            // Config power
-            ros::Duration(0.1).sleep();
-            sp_nonblocking_write(serial_port, invengo_config_power[rfid_power], sizeof(invengo_config_power[rfid_power]));
-            // Start
-            ros::Duration(0.1).sleep();
-            sp_nonblocking_write(serial_port, invengo_start1, sizeof(invengo_start1));
-            ros::Duration(0.1).sleep();
-            sp_nonblocking_write(serial_port, invengo_start2, sizeof(invengo_start2));
-        }
     }
     else if (!rfid_use_native)
     {
         // Baudrate
         ros::Duration(2.5).sleep();
         help.rs232_baudrate(rfid_port, rfid_baud);
-
-        if (rfid_type == RFID_INVENGO)
-        {
-            if (rfid_power < 11)
-                rfid_power = 0;
-            else if (rfid_power > 30)
-                rfid_power = 19;
-            else
-                rfid_power -= 11;
-
-            // Stop
-            ros::Duration(0.1).sleep();
-            help.rs232_tx(rfid_port, std::vector<uint8_t>(invengo_stop, invengo_stop + sizeof(invengo_stop)));
-            // Config mode
-            ros::Duration(0.1).sleep();
-            help.rs232_tx(rfid_port, std::vector<uint8_t>(invengo_config_mode, invengo_config_mode + sizeof(invengo_config_mode)));
-            // Config time
-            ros::Duration(0.1).sleep();
-            help.rs232_tx(rfid_port, std::vector<uint8_t>(invengo_config_time, invengo_config_time + sizeof(invengo_config_time)));
-            // Config power
-            ros::Duration(0.1).sleep();
-            help.rs232_tx(rfid_port, std::vector<uint8_t>(invengo_config_power[rfid_power], invengo_config_power[rfid_power] + sizeof(invengo_config_power[rfid_power])));
-            // Start
-            ros::Duration(0.1).sleep();
-            help.rs232_tx(rfid_port, std::vector<uint8_t>(invengo_start1, invengo_start1 + sizeof(invengo_start1)));
-            ros::Duration(0.1).sleep();
-            help.rs232_tx(rfid_port, std::vector<uint8_t>(invengo_start2, invengo_start2 + sizeof(invengo_start2)));
-        }
     }
+
+    if (rfid_type == RFID_INVENGO)
+        invengo_init();
+    else if (rfid_type == RFID_CU1)
+        cu1_init();
 
     return 0;
 }
@@ -324,6 +289,45 @@ void rfid_parser(uint8_t data)
 //=============================================================================
 //-----------------------------------------------------------------------------
 //=============================================================================
+
+void invengo_init()
+{
+    if (rfid_power < 11)
+        rfid_power = 0;
+    else if (rfid_power > 30)
+        rfid_power = 19;
+    else
+        rfid_power -= 11;
+
+    if (rfid_use_native)
+    {
+        // Stop
+        sp_nonblocking_write(serial_port, invengo_stop, sizeof(invengo_stop));
+        // Config mode
+        sp_nonblocking_write(serial_port, invengo_config_mode, sizeof(invengo_config_mode));
+        // Config time
+        sp_nonblocking_write(serial_port, invengo_config_time, sizeof(invengo_config_time));
+        // Config power
+        sp_nonblocking_write(serial_port, invengo_config_power[rfid_power], sizeof(invengo_config_power[rfid_power]));
+        // Start
+        sp_nonblocking_write(serial_port, invengo_start1, sizeof(invengo_start1));
+        sp_nonblocking_write(serial_port, invengo_start2, sizeof(invengo_start2));
+    }
+    else if (!rfid_use_native)
+    {
+        // Stop
+        help.rs232_tx(rfid_port, std::vector<uint8_t>(invengo_stop, invengo_stop + sizeof(invengo_stop)));
+        // Config mode
+        help.rs232_tx(rfid_port, std::vector<uint8_t>(invengo_config_mode, invengo_config_mode + sizeof(invengo_config_mode)));
+        // Config time
+        help.rs232_tx(rfid_port, std::vector<uint8_t>(invengo_config_time, invengo_config_time + sizeof(invengo_config_time)));
+        // Config power
+        help.rs232_tx(rfid_port, std::vector<uint8_t>(invengo_config_power[rfid_power], invengo_config_power[rfid_power] + sizeof(invengo_config_power[rfid_power])));
+        // Start
+        help.rs232_tx(rfid_port, std::vector<uint8_t>(invengo_start1, invengo_start1 + sizeof(invengo_start1)));
+        help.rs232_tx(rfid_port, std::vector<uint8_t>(invengo_start2, invengo_start2 + sizeof(invengo_start2)));
+    }
+}
 
 void invengo_parser(uint8_t data)
 {
@@ -397,6 +401,10 @@ void invengo_parser(uint8_t data)
             pub_rfid_status_response.publish(msg_rfid_status_response);
         }
     }
+}
+
+void cu1_init()
+{
 }
 
 void cu1_parser(uint8_t data)
@@ -569,4 +577,7 @@ void rfid_entry(std::vector<uint8_t> epc, std::vector<uint8_t> tid, std::vector<
         msg_rfid_tag.userdata = userdata;
         pub_rfid_tag.publish(msg_rfid_tag);
     }
+
+    // Menandai waktu terakhir rfid berhasil ter-scan
+    last_rfid_time = ros::Time::now().toSec();
 }
