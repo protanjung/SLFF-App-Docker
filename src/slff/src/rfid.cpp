@@ -173,16 +173,16 @@ void cllbck_tim_50hz(const ros::TimerEvent &event)
 
 void cllbck_tim_51hz(const ros::TimerEvent &event)
 {
-    // Inisialisasi ulang rfid jika idle selama 60 detik
-    if (ros::Time::now().toSec() - last_rfid_time > 60)
-    {
-        last_rfid_time = ros::Time::now().toSec();
+    // // Inisialisasi ulang rfid jika idle selama 60 detik
+    // if (ros::Time::now().toSec() - last_rfid_time > 60)
+    // {
+    //     last_rfid_time = ros::Time::now().toSec();
 
-        if (rfid_type == RFID_INVENGO)
-            invengo_init();
-        else if (rfid_type == RFID_CU1)
-            cu1_init();
-    }
+    //     if (rfid_type == RFID_INVENGO)
+    //         invengo_init();
+    //     else if (rfid_type == RFID_CU1)
+    //         cu1_init();
+    // }
 }
 
 //=============================================================================
