@@ -555,8 +555,7 @@ void rfid_entry(std::vector<uint8_t> epc, std::vector<uint8_t> tid, std::vector<
 
     // Memperbarui rfid yang umurnya kurang dari 60 detik
     for (int i = 0; i < rfid_pool.size(); i++)
-        if (rfid_pool[i].epc == epc &&
-            rfid_pool[i].tid == tid)
+        if (rfid_pool[i].tid == tid)
         {
             rfid_pool[i].time = ros::Time::now().toSec();
             isNew = 0;

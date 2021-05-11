@@ -1315,7 +1315,7 @@ void queue_entry()
 
     // Memeriksa apakah ada RFID yang sama di dalam antrian
     for (int i = 0; i < kr.size(); i++)
-        if (rfid_tid == kr[i].rfid_tid && rfid_epc == kr[i].rfid_epc)
+        if (rfid_tid == kr[i].rfid_tid)
         {
             help.log_error("Kendaraan dengan RFID yang sama sudah di dalam antrian");
             return;
