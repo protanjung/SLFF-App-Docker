@@ -34,7 +34,7 @@ jobs:
         tags: protanjung/slff-app-docker:main
 
     - name: Update Repo Description
-      uses: peter-evans/dockerhub-description@v2
+      uses: peter-evans/dockerhub-description@v2.4.2
       with:
         username: ${{ secrets.DOCKERHUB_USERNAME }}
         password: ${{ secrets.DOCKERHUB_PASSWORD }}
