@@ -8,7 +8,7 @@ from slff.msg import exporter_version
 from slff.msg import exporter_uptime
 
 slff_peripheral_status = Gauge("slff_peripheral_status", "Peripheral status", ["peripheral"])
-slff_version = Gauge("slff_version", "Version", ["version"])
+slff_version = Gauge("slff_version", "Version", ["ver"])
 slff_uptime = Gauge("slff_uptime", "Uptime")
 
 # =============================================================================
@@ -31,7 +31,7 @@ def cllbck_sub_exporter_peripheral_status(msg):
 
 
 def cllbck_sub_exporter_version(msg):
-    slff_version.labels(version=msg.version).set(1)
+    slff_version.labels(ver=msg.version).set(1)
 
 
 def cllbck_sub_exporter_uptime(msg):
