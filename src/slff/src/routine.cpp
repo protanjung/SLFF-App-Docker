@@ -739,18 +739,7 @@ void cllbck_sub_gto_store(const slff::gto_storeConstPtr &msg)
         //-----------------------------
         if (kr[i].algorithm_state == STATE_GTO_STORE)
         {
-            // Jika RFID tidak valid
-            if (kr[i].rfid_flag != 1)
-            {
-                help_gto_store(i, *msg);
-            }
-            // Jika RFID valid
-            else if (kr[i].rfid_flag == 1)
-            {
-                if (msg->no_seri_control_unit == kr[i].no_seri_control_unit &&
-                    msg->rfid_tid == kr[i].rfid_tid)
-                    help_gto_store(i, *msg);
-            }
+            help_gto_store(i, *msg);
 
             //-----------------------------
 
