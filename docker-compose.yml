@@ -13,23 +13,16 @@ services:
       - ~/slff-data:/root/slff-data
       - /dev:/dev
 
-  # FTPD
-  ftpd:
-    container_name: ftpd
-    image: stilliard/pure-ftpd
+  # SLFF-DATA
+  slff-data:
+    container_name: slff-data
+    build: src/slff/www
     restart: always
     privileged: false
     ports:
-      - "21:21"
-      - "30000-30009:30000-30009"
+      - "8080:80"
     volumes:
-      - ~/slff-data/log:/root/slff-data/log
-    environment:
-      - FTP_USER_NAME=jasamarga
-      - FTP_USER_PASS=jasamarga
-      - FTP_USER_HOME=/root/slff-data/log
-      - PUBLICHOST=0.0.0.0
-      - ADDED_FLAGS=-d -d
+      - ~/slff-data:/var/www/html/slff-data
 
   # MySQL
   mysql:
