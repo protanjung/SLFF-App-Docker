@@ -74,7 +74,7 @@ services:
 
   # Watchtower
   watchtower:
-    container_name: watchtower 
+    container_name: watchtower
     image: containrrr/watchtower
     restart: always
     privileged: false
@@ -88,5 +88,5 @@ services:
       - WATCHTOWER_TRACE=true
       - WATCHTOWER_POLL_INTERVAL=10800
       - WATCHTOWER_MONITOR_ONLY=true
-    command: 
+    command:
       - slff
