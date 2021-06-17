@@ -67,6 +67,7 @@ add_message_files(
   gto_status_response.msg
   exporter_peripheral_status.msg
   exporter_version.msg
+  exporter_uptime.msg
 )
 
 ## Generate services in the 'srv' folder

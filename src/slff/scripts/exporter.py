@@ -5,9 +5,11 @@ from prometheus_client import start_http_server, Counter, Gauge, Histogram, Summ
 import rospy
 from slff.msg import exporter_peripheral_status
 from slff.msg import exporter_version
+from slff.msg import exporter_uptime
 
 slff_peripheral_status = Gauge("slff_peripheral_status", "Peripheral status", ["peripheral"])
-slff_version = Gauge("slff_version", "Version", ["ver"])
+slff_version = Gauge("slff_version", "Version", ["version"])
+slff_uptime = Gauge("slff_uptime", "Uptime")
 
 # =============================================================================
 # -----------------------------------------------------------------------------
@@ -29,7 +31,11 @@ def cllbck_sub_exporter_peripheral_status(msg):
 
 
 def cllbck_sub_exporter_version(msg):
-    slff_version.labels(ver=msg.version).set(1)
+    slff_version.labels(version=msg.version).set(1)
+
+
+def cllbck_sub_exporter_uptime(msg):
+    slff_uptime.set(msg.uptime)
 
 # =============================================================================
 # -----------------------------------------------------------------------------
@@ -65,6 +71,7 @@ if __name__ == "__main__":
     # Subscriber
     sub_exporter_peripheral_status = rospy.Subscriber('exporter/peripheral_status', exporter_peripheral_status, cllbck_sub_exporter_peripheral_status)
     sub_exporter_version = rospy.Subscriber('exporter/version', exporter_version, cllbck_sub_exporter_version)
+    sub_exporter_uptime = rospy.Subscriber('exporter/uptime', exporter_uptime, cllbck_sub_exporter_uptime)
 
     if(exporter_init() == -1):
         rospy.signal_shutdown("signal shutdown")

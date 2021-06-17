@@ -3,6 +3,7 @@
 #include "ros/ros.h"
 #include "slff/define.h"
 #include "slff/exporter_peripheral_status.h"
+#include "slff/exporter_uptime.h"
 #include "slff/exporter_version.h"
 #include "slff/gto_ack.h"
 #include "slff/gto_init.h"
@@ -94,6 +95,7 @@ ros::Publisher pub_gto_status_request;
 ros::Publisher pub_rfid_status_request;
 ros::Publisher pub_exporter_peripheral_status;
 ros::Publisher pub_exporter_version;
+ros::Publisher pub_exporter_uptime;
 //=====ServiceClient
 ros::ServiceClient cli_rss_check;
 ros::ServiceClient cli_rss_store;
@@ -211,6 +213,9 @@ periph_status rfid_status;
 double gto_status_timer;
 double rfid_status_timer;
 
+//=====Uptime
+double uptime_timer;
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "routine");
@@ -248,6 +253,7 @@ int main(int argc, char **argv)
     pub_rfid_status_request = NH.advertise<slff::rfid_status_request>("rfid/status_request", 0);
     pub_exporter_peripheral_status = NH.advertise<slff::exporter_peripheral_status>("exporter/peripheral_status", 0);
     pub_exporter_version = NH.advertise<slff::exporter_version>("exporter/version", 0);
+    pub_exporter_uptime = NH.advertise<slff::exporter_uptime>("exporter/uptime", 0);
     //=====ServiceClient
     cli_rss_check = NH.serviceClient<slff::rss_check>("rss/check");
     cli_rss_store = NH.serviceClient<slff::rss_store>("rss/store");
@@ -623,6 +629,10 @@ void cllbck_tim_1hz(const ros::TimerEvent &event)
     slff::exporter_version msg_exporter_version;
     msg_exporter_version.version = std::string(version);
     pub_exporter_version.publish(msg_exporter_version);
+
+    slff::exporter_uptime msg_exporter_uptime;
+    msg_exporter_uptime.uptime = ros::Time::now().toSec() - uptime_timer;
+    pub_exporter_uptime.publish(msg_exporter_uptime);
 }
 
 //=============================================================================
@@ -851,6 +861,8 @@ int routine_init()
     gto_status.status = rfid_status.status = 255;
     gto_status.datetime = rfid_status.datetime = ros::Time::now().toSec();
     gto_status_timer = rfid_status_timer = ros::Time::now().toSec();
+
+    uptime_timer = ros::Time::now().toSec();
 
     return 0;
 }
