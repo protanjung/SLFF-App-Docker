@@ -817,11 +817,19 @@ int routine_init()
 / Single Lane Free Flow \
 \ IoT Lab Jasa Marga    /
  -----------------------
-        \   ^__^
-         \  (oo)\_______
-            (__)\       )\/\
-                ||----w |
-                ||     ||
+     \   
+      \
+          _
+        _/ }
+       `>' \
+       `|   \
+        |   /'-.     .-.
+         \'     ';`--' .'
+          \'.    `'-./
+           '.`-..-;`
+             `;-..'
+             _| _|
+             /` /`
 )");
 
     slff_json_path = getenv("HOME") + std::string("/slff-data/slff.json");
